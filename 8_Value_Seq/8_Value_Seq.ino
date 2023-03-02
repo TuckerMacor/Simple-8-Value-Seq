@@ -1,3 +1,6 @@
+//Simple Sequencer | Tucker Macor | Created 2023-02-27 | Updated 2023-03-01
+//this code works but is relatively lacking in comments so have fun figuring out whats going on!
+
 #define buttonCount 8
 const int buttonPins[buttonCount] = {2, 3, 4, 5, 6, 7, 8, 9};
 const int outputPins[buttonCount] = {A0, A1, A2, A3, A4, A5, 0, 1};
@@ -25,6 +28,12 @@ unsigned long lastResetTime = 0;
 int reading;
 int currentStep = 0;
 int buttonsPressed = 0;
+
+int state = 0;
+int sequence[32];
+int sequenceLength = 2;
+int positionToAdd = 0;
+int sequencePlayPosition = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -60,13 +69,17 @@ void loop() {
   }
 
   // select output
-  for (byte i = 0; i < buttonCount; i++) {
-    if (i == currentStep) {
+  if (state == 0 || state == 2) {
+    applyOutputPosition();
+  }
+  else if (state == 1) {
+    for (byte i = 0; i < buttonCount; i++) {
       digitalWrite(outputPins[i], HIGH);
     }
-    else {
-      digitalWrite(outputPins[i], LOW);
-    }
+  }
+  else if (state == 3) {
+    currentStep = sequence[sequencePlayPosition];
+    applyOutputPosition();
   }
 }
 
@@ -80,8 +93,37 @@ void readButtons() {//check if buttons got pressed
     if ((millis() - lastDebounceTime) > debounceDelay) {
       if (reading != buttonState[i]) {
         buttonState[i] = reading;
-        if (buttonState[i] == LOW) {
-          currentStep = i;
+        if (!buttonState[i]) {
+          if (state == 0) {
+            if (!buttonState[0] && !buttonState[7]) {
+              state = 1;
+            }
+            else {
+              currentStep = i;
+            }
+          }
+          else if (state == 1) {
+            positionToAdd = 0;
+            sequenceLength = ((i + 1) * 4) - 1;
+            state = 2;
+          }
+          else if (state == 2) {
+            currentStep = i;
+            sequence[positionToAdd] = i;
+            positionToAdd++;
+            applyOutputPosition();
+            if (positionToAdd > sequenceLength) {
+              state = 3;
+            }
+          }
+          else if (state == 3) {
+            if (i==7) {
+              state = 0;
+            }
+            else{
+              state = 1;
+            }
+          }
         }
       }
     }
@@ -101,7 +143,15 @@ void readInputs() {
     if (reading != forwardState) {
       forwardState = reading;
       if (forwardState == HIGH) {
-        currentStep++;
+        if (state == 0) {
+          currentStep++;
+        }
+        else if (state == 3) {
+          sequencePlayPosition++;
+          if (sequencePlayPosition > sequenceLength) {
+            sequencePlayPosition = 0;
+          }
+        }
       }
     }
   }
@@ -115,7 +165,15 @@ void readInputs() {
     if (reading != reverseState) {
       reverseState = reading;
       if (reverseState == HIGH) {
-        currentStep--;
+        if (state == 0) {
+          currentStep--;
+        }
+        else if (state == 3) {
+          sequencePlayPosition--;
+          if (sequencePlayPosition < 0) {
+            sequencePlayPosition = sequenceLength;
+          }
+        }
       }
     }
   }
@@ -129,9 +187,23 @@ void readInputs() {
     if (reading != resetState) {
       resetState = reading;
       if (resetState == HIGH) {
-        currentStep = 0;
+        if (state == 0 || state == 3) {
+          currentStep = 0;
+          sequencePlayPosition = 0;
+        }
       }
     }
   }
   lastResetState = reading;
+}
+
+void applyOutputPosition() {
+  for (byte i = 0; i < buttonCount; i++) {
+    if (i == currentStep) {
+      digitalWrite(outputPins[i], HIGH);
+    }
+    else {
+      digitalWrite(outputPins[i], LOW);
+    }
+  }
 }
