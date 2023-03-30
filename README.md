@@ -2,7 +2,7 @@
 
 Simple arduino nano based sequencer inspired by classic baby 8 sequencer designs but now with more features
 
-![Front](relative%20\Images\Back.png?raw=true "Front")
+![Front](\Images\Back.png?raw=true "Front")
 
 # Rack Requirements
 
