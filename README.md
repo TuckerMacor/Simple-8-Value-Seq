@@ -23,9 +23,13 @@ Simple arduino nano based sequencer inspired by classic baby 8 sequencer designs
 # Arduino Pin Connections
 
 D2 - D9 are the button inputs
+
 A0 - A5, D0 and D1 are the 8 step outputs
+
 D10 - forward input jack
+
 D11 - reverse input jack
+
 D12 - reset input jack
 
 # Schematic
