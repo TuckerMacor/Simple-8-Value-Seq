@@ -2,7 +2,9 @@
 
 Simple arduino nano based sequencer inspired by classic baby 8 sequencer designs but now with more features
 
-![Front](relative%20\Images\Back.png?raw=true "Front")
+![](https://github.com/TuckerMacor/Simple-8-Value-Seq/blob/main/Images/Front.png?raw=true)
+
+![](https://github.com/TuckerMacor/Simple-8-Value-Seq/blob/main/Images/Back.png?raw=true)
 
 # Rack Requirements
 
