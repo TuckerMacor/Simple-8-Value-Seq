@@ -10,11 +10,7 @@ Simple arduino nano based sequencer inspired by classic baby 8 sequencer designs
 
 #### Power
 
-5 Volt: 50 mA
-
-12 Volt: 0 mA
-
--12 Volt: 0 mA
+5 Volt: 50 mA (max)
 
 #### Size
 
